@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vihaan — Build Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0e17;
+    --bg-2: #0d1420;
+    --panel: rgba(255,255,255,0.04);
+    --panel-border: rgba(255,255,255,0.09);
+    --ink: #e8ecf4;
+    --ink-dim: #8b96ac;
+    --cyan: #52e0d8;
+    --amber: #ffb454;
+    --violet: #a596ff;
+    --serif: 'Space Grotesk', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(82,224,216,0.09), transparent),
+      radial-gradient(ellipse 700px 500px at 90% 15%, rgba(165,150,255,0.08), transparent),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--serif);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--cyan); color:#04141f;}
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+
+  .wrap{max-width:920px; margin:0 auto; padding:0 24px;}
+
+
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    backdrop-filter:blur(14px);
+    background:rgba(10,14,23,0.72);
+    border-bottom:1px solid var(--panel-border);
+  }
+  .topbar-inner{
+    max-width:920px; margin:0 auto; padding:14px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{font-family:var(--mono); font-size:13px; letter-spacing:0.02em; color:var(--ink);}
+  .brand b{color:var(--cyan);}
+  .navlinks{display:flex; gap:22px; font-family:var(--mono); font-size:12.5px;}
+  .navlinks button{
+    background:none; border:none; color:var(--ink-dim); cursor:pointer; padding:4px 0;
+    font-family:var(--mono); font-size:12.5px; transition:color .15s;
+  }
+  .navlinks button:hover{color:var(--cyan);}
+  @media (max-width:640px){ .navlinks{display:none;} }
+
+  
+  .hero{padding:100px 0 70px; position:relative;}
+  .status-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:12px; color:var(--cyan);
+    border:1px solid rgba(82,224,216,0.35); border-radius:999px;
+    padding:6px 13px; margin-bottom:28px; background:rgba(82,224,216,0.06);
+  }
+  .status-dot{width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px var(--cyan); animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
+
+  h1.hero-title{
+    font-size:clamp(38px, 7vw, 68px);
+    line-height:1.03; margin:0 0 20px; font-weight:700; letter-spacing:-0.02em;
+  }
+  h1.hero-title .who{color:var(--ink);}
+  h1.hero-title .accent{color:var(--cyan);}
+
+  .hero-sub{
+    font-size:18px; color:var(--ink-dim); max-width:520px; line-height:1.6; margin:0 0 34px;
+  }
+  .hero-cta{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono); font-size:13px; padding:11px 20px; border-radius:8px;
+    border:1px solid var(--panel-border); background:var(--panel); color:var(--ink); cursor:pointer;
+    transition:transform .15s, border-color .15s, background .15s;
+  }
+  .btn:hover{transform:translateY(-2px); border-color:var(--cyan); background:rgba(82,224,216,0.08);}
+  .btn.primary{background:var(--cyan); color:#04141f; border-color:var(--cyan); font-weight:600;}
+  .btn.primary:hover{background:#6ee8e0;}
+
+ 
+  section{padding:64px 0; border-top:1px solid var(--panel-border);}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; color:var(--ink-dim); margin:0 0 10px;
+  }
+  h2.section-title{
+    font-size:clamp(26px, 4vw, 36px); margin:0 0 8px; font-weight:600; letter-spacing:-0.01em;
+  }
+  .section-desc{color:var(--ink-dim); max-width:560px; line-height:1.6; margin:0 0 36px; font-size:15.5px;}
+
+  .panel{
+    background:var(--panel); border:1px solid var(--panel-border); border-radius:14px;
+    padding:22px; backdrop-filter:blur(6px);
+  }
+
+
+  .location-card{display:flex; gap:26px; align-items:center; flex-wrap:wrap;}
+  .location-badge{
+    font-family:var(--mono); font-size:44px; font-weight:700; color:var(--amber);
+    line-height:1;
+  }
+  .location-text{flex:1; min-width:220px;}
+  .location-text .city{font-size:22px; font-weight:600; margin:0 0 6px;}
+  .location-text .joke{color:var(--ink-dim); font-size:15px; margin:0;}
+
+
+  .school-terminal{
+    font-family:var(--mono); font-size:13.5px; line-height:1.9;
+  }
+  .school-terminal .line{color:var(--ink-dim);}
+  .school-terminal .line .val{color:var(--cyan);}
+  .school-q{margin:26px 0 14px; font-size:16px; font-family:var(--serif); font-weight:600;}
+  .school-options{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px;}
+  .school-opt{
+    font-family:var(--mono); font-size:12.5px; padding:9px 15px; border-radius:8px;
+    background:rgba(255,255,255,0.03); border:1px solid var(--panel-border); color:var(--ink);
+    cursor:pointer; transition:all .15s;
+  }
+  .school-opt:hover{border-color:var(--amber); color:var(--amber);}
+  .school-opt.picked{background:rgba(255,180,84,0.12); border-color:var(--amber); color:var(--amber);}
+  .school-reply{
+    min-height:22px; font-family:var(--mono); font-size:13px; color:var(--violet);
+  }
+
+ 
+  .state-tabs{display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap;}
+  .state-tab{
+    font-family:var(--mono); font-size:12.5px; padding:9px 16px; border-radius:999px;
+    background:rgba(255,255,255,0.03); border:1px solid var(--panel-border); color:var(--ink-dim);
+    cursor:pointer; transition:all .2s;
+  }
+  .state-tab.active{background:var(--cyan); color:#04141f; border-color:var(--cyan); font-weight:600;}
+  .state-display{
+    min-height:210px; border-radius:14px; border:1px solid var(--panel-border);
+    padding:30px; position:relative; overflow:hidden; transition:background .3s;
+  }
+  .state-display[data-state="liquid"]{background:linear-gradient(180deg, rgba(82,224,216,0.10), rgba(82,224,216,0.02));}
+  .state-display[data-state="gas"]{background:linear-gradient(180deg, rgba(165,150,255,0.10), rgba(165,150,255,0.02));}
+  .state-display[data-state="solid"]{background:linear-gradient(180deg, rgba(255,180,84,0.10), rgba(255,180,84,0.02));}
+  .state-symbol{font-size:38px; margin-bottom:14px;}
+  .state-name{font-family:var(--mono); font-size:12px; color:var(--ink-dim); letter-spacing:0.04em; margin-bottom:6px;}
+  .state-item{font-size:24px; font-weight:600; margin:0 0 10px;}
+  .state-note{color:var(--ink-dim); font-size:14.5px; max-width:420px; line-height:1.6;}
+  .molecule{position:absolute; border-radius:50%; opacity:0.5;}
+
+
+  .profile-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;
+  }
+  .profile-card{
+    padding:18px; border-radius:12px; background:var(--panel); border:1px solid var(--panel-border);
+    transition:transform .18s, border-color .18s;
+  }
+  .profile-card:hover{transform:translateY(-3px); border-color:rgba(82,224,216,0.4);}
+  .profile-key{font-family:var(--mono); font-size:11px; color:var(--ink-dim); letter-spacing:0.04em; margin-bottom:6px;}
+  .profile-val{font-size:16px; font-weight:600;}
+
+  /* ---------- programming personality ---------- */
+  .quote-stack{display:flex; flex-direction:column; gap:14px; margin-top:10px;}
+  .quote-line{
+    font-size:17px; padding:16px 20px; border-left:2px solid var(--cyan); background:rgba(82,224,216,0.04);
+    border-radius:0 10px 10px 0; line-height:1.5;
+  }
+
+
+  .mac-card{display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start;}
+  .mac-icon{font-size:52px;}
+  .mac-status{font-family:var(--mono); font-size:13.5px; line-height:2; color:var(--ink-dim); flex:1; min-width:220px;}
+  .mac-status .dots{color:var(--panel-border);}
+  .mac-status .v{color:var(--amber); font-weight:600;}
+  .mac-hint{margin-top:14px; font-family:var(--mono); font-size:12.5px; color:var(--violet); cursor:pointer;}
+
+
+  .contact-card{text-align:left;}
+  .contact-links{display:flex; gap:12px; flex-wrap:wrap; margin-top:20px;}
+
+  footer{padding:40px 0 90px; color:var(--ink-dim); font-family:var(--mono); font-size:12px;}
+
+ 
+  #kiwi-wrap{
+    position:fixed; right:22px; bottom:22px; z-index:50;
+    display:flex; align-items:flex-end; gap:10px;
+  }
+  #kiwi-bubble{
+    max-width:230px; font-family:var(--mono); font-size:12.5px; line-height:1.5;
+    background:rgba(15,20,30,0.95); border:1px solid var(--panel-border); border-radius:12px 12px 2px 12px;
+    padding:12px 14px; color:var(--ink); opacity:0; transform:translateY(6px) scale(0.97);
+    transition:opacity .25s, transform .25s; pointer-events:none;
+  }
+  #kiwi-bubble.show{opacity:1; transform:translateY(0) scale(1);}
+  #kiwi-btn{
+    width:56px; height:56px; border-radius:50%; border:1px solid var(--panel-border);
+    background:radial-gradient(circle at 35% 30%, #1a2333, #0d121c);
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 20px rgba(0,0,0,0.4); transition:transform .15s;
+    flex-shrink:0;
+  }
+  #kiwi-btn:hover{transform:scale(1.06);}
+  #kiwi-btn:active{transform:scale(0.95);}
+  #kiwi-btn svg{width:34px; height:34px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  .fine{font-family:var(--mono); font-size:11.5px; color:var(--ink-dim); margin-top:6px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">VIHAAN<b>.dev</b></div>
+    <div class="navlinks">
+      <button onclick="jump('about')">about</button>
+      <button onclick="jump('school')">school</button>
+      <button onclick="jump('matter')">experiments</button>
+      <button onclick="jump('profile')">profile</button>
+      <button onclick="jump('mac')">machine</button>
+      <button onclick="jump('contact')">contact</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+ 
+  <section class="hero" style="border-top:none;" id="top">
+    <div class="status-pill"><span class="status-dot"></span> currently 13 years old and figuring it out</div>
+    <h1 class="hero-title"><span class="who">Hi, I'm Vihaan.</span><br><span class="accent">I make computers do weird things.</span></h1>
+    <p class="hero-sub">A 13-year-old from Delhi who got a little too into programming. Not a professional. Just someone who thinks building stuff is more fun than most things.</p>
+    <div class="hero-cta">
+      <button class="btn primary" onclick="jump('matter')">Run the experiments</button>
+      <button class="btn" onclick="kiwiSay('You clicked a button just to see what it does. Respect.')">Poke the Kiwi</button>
+    </div>
+  </section>
+
+
+  <section id="about">
+    <p class="eyebrow">LOCATION</p>
+    <h2 class="section-title">Delhi, India</h2>
+    <p class="section-desc">Where the traffic operates like a live multiplayer game with no respawns and everyone is somehow still winning.</p>
+    <div class="panel location-card">
+      <div class="location-badge">DEL</div>
+      <div class="location-text">
+        <p class="city">Home base: Delhi</p>
+        <p class="joke">Local difficulty setting: crossing the road. Achievement unlocked daily.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="school">
+    <p class="eyebrow">DAILY OPERATIONS</p>
+    <h2 class="section-title">Why does Vihaan go to school?</h2>
+    <p class="section-desc">Genuine mystery. Pick a theory and see what happens.</p>
+    <div class="panel">
+      <div class="school-terminal">
+        <div class="line">SCHOOL.EXE — status: <span class="val">running</span></div>
+        <div class="line">performance — <span class="val">questionable, but stable</span></div>
+        <div class="line">homework.exe — <span class="val">detected</span></div>
+      </div>
+      <p class="school-q">Pick the real reason:</p>
+      <div class="school-options">
+        <button class="school-opt" data-r="To learn things. Allegedly.">to learn things</button>
+        <button class="school-opt" data-r="To collect homework, mostly.">to collect homework</button>
+        <button class="school-opt" data-r="To return home and immediately start coding.">to come home and code</button>
+        <button class="school-opt" data-r="Nobody really knows. Not even Vihaan.">nobody really knows</button>
+      </div>
+      <div class="school-reply" id="schoolReply"></div>
+    </div>
+  </section>
+
+
+  <section id="matter">
+    <p class="eyebrow">FIELD RESEARCH</p>
+    <h2 class="section-title">The Periodic Table of Vihaan</h2>
+    <p class="section-desc">We attempted to scientifically classify Vihaan's favorite things by state of matter. The results were conclusive but not respectable.</p>
+    <div class="state-tabs">
+      <button class="state-tab active" data-state="liquid" onclick="setState('liquid')">LIQUID</button>
+      <button class="state-tab" data-state="gas" onclick="setState('gas')">GAS</button>
+      <button class="state-tab" data-state="solid" onclick="setState('solid')">SOLID</button>
+    </div>
+    <div class="state-display" id="stateDisplay" data-state="liquid">
+      <div class="state-symbol">💧</div>
+      <div class="state-name">STATE: LIQUID</div>
+      <div class="state-item">Water</div>
+      <div class="state-note">Classic. Hydration update: installed. No further testing required.</div>
+    </div>
+  </section>
+
+
+  <section id="profile">
+    <p class="eyebrow">SYSTEM SCAN</p>
+    <h2 class="section-title">Vihaan // system profile</h2>
+    <p class="section-desc">Classified. Mostly harmless.</p>
+    <div class="profile-grid">
+      <div class="profile-card"><div class="profile-key">AGE</div><div class="profile-val">13</div></div>
+      <div class="profile-card"><div class="profile-key">LOCATION</div><div class="profile-val">Delhi, India</div></div>
+      <div class="profile-card"><div class="profile-key">OCCUPATION</div><div class="profile-val">Student</div></div>
+      <div class="profile-card"><div class="profile-key">SIDE QUEST</div><div class="profile-val">Programming</div></div>
+      <div class="profile-card"><div class="profile-key">PRIMARY DEVICE</div><div class="profile-val">Mac</div></div>
+      <div class="profile-card"><div class="profile-key">CURRENT MISSION</div><div class="profile-val">Build cool things</div></div>
+      <div class="profile-card"><div class="profile-key">FAVORITE LIQUID</div><div class="profile-val">Water</div></div>
+      <div class="profile-card"><div class="profile-key">FAVORITE GAS</div><div class="profile-val">Air</div></div>
+      <div class="profile-card"><div class="profile-key">FAVORITE SOLIDS</div><div class="profile-val">Metal + Burger</div></div>
+      <div class="profile-card"><div class="profile-key">MENTOR</div><div class="profile-val">Tony Stark</div></div>
+      <div class="profile-card"><div class="profile-key">TRUSTS</div><div class="profile-val">God</div></div>
+      <div class="profile-card"><div class="profile-key">TABS OPEN</div><div class="profile-val">Probably too many</div></div>
+    </div>
+  </section>
+
+
+  <section id="personality">
+    <p class="eyebrow">DISCLAIMER</p>
+    <h2 class="section-title">I'm not a professional programmer</h2>
+    <p class="section-desc">I'm just a guy who likes making computers do weird things. Here's the honest version of how that goes.</p>
+    <div class="quote-stack">
+      <div class="quote-line">Programming makes me feel alive.</div>
+      <div class="quote-line">Sometimes the code works.</div>
+      <div class="quote-line">Sometimes I work around the code.</div>
+      <div class="quote-line">Sometimes I stare at the error until the error gets uncomfortable and leaves.</div>
+    </div>
+  </section>
+
+
+  <section id="mac">
+    <p class="eyebrow">HARDWARE</p>
+    <h2 class="section-title">My current machine</h2>
+    <p class="section-desc">A Mac. It has not, at any point, fixed my code by itself.</p>
+    <div class="panel mac-card">
+      <div class="mac-icon">🍎</div>
+      <div class="mac-status">
+        <div>Coding <span class="dots">..........</span> <span class="v">ACTIVE</span></div>
+        <div>Battery <span class="dots">..........</span> <span class="v">hopefully</span></div>
+        <div>Tabs <span class="dots">..........</span> <span class="v">classified</span></div>
+        <div>Terminal <span class="dots">..........</span> <span class="v">dangerous</span></div>
+        <div>Coffee <span class="dots">..........</span> <span class="v">not included</span></div>
+        <div class="mac-hint" onclick="kiwiSay('Yes, he uses a Mac. No, this does not automatically make his code work.')">click for a status update →</div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="contact">
+    <p class="eyebrow">GET IN TOUCH</p>
+    <h2 class="section-title">Say hi</h2>
+    <div class="panel contact-card">
+      <p class="section-desc" style="margin-bottom:0;">He's probably coding right now. Try anyway — worst case, he replies between compiles.</p>
+      <div class="contact-links">
+        <button class="btn primary" onclick="kiwiSay('A contact form goes here once Vihaan wires one up.')">Send a message</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    built by a 13 year old · Delhi, India · probably still debugging something
+  </footer>
+</div>
+
+
+<div id="kiwi-wrap">
+  <div id="kiwi-bubble"></div>
+  <button id="kiwi-btn" aria-label="Kiwi mascot" onclick="kiwiRandom()">
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="24" cy="27" rx="15" ry="14" fill="#a596ff"/>
+      <ellipse cx="15" cy="23" rx="3.2" ry="3.6" fill="#0a0e17"/>
+      <circle cx="15.8" cy="22" r="1" fill="#fff"/>
+      <path d="M9 27 Q3 27 2 25" stroke="#ffb454" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M20 40 Q24 44 28 40" stroke="#7a6de0" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  function jump(id){
+    document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+    sectionLine(id);
+  }
+
+  /* ---------- Kiwi ---------- */
+  const bubble = document.getElementById('kiwi-bubble');
+  let bubbleTimer;
+  function kiwiSay(text){
+    clearTimeout(bubbleTimer);
+
+    bubble.textContent = text;
+    bubble.classList.add('show');
+    bubbleTimer = setTimeout(()=> bubble.classList.remove('show'), 4200);
+  }
+
+  const randomLines = [
+    "You have been here a while. At this point you're basically part of the project.",
+    "Bro. You can stop clicking. …okay one more.",
+    "I admire the dedication, honestly.",
+    "This feature was definitely planned.",
+    "Currently pretending to understand CSS.",
+    "New tab opened. Somewhere. Probably.",
+    "Fun fact: I have no idea what I'm doing either.",
+    "Status: still a bird. Still judging your scrolling speed."
+  ];
+  function kiwiRandom(){
+    kiwiSay(randomLines[Math.floor(Math.random()*randomLines.length)]);
+  }
+
+  const sectionLines = {
+    about: "You want to know about Vihaan? That's a surprisingly brave decision.",
+    school: "Do we really need to talk about school?",
+    matter: "We attempted real science. It went sideways almost immediately.",
+    profile: "Everything here is technically true. Mostly.",
+    personality: "He's not a pro. He'll tell you that himself. Repeatedly.",
+    mac: "Finally. A place where bugs are considered features.",
+    contact: "He's probably coding. Try anyway."
+  };
+  function sectionLine(id){
+    if(sectionLines[id]) kiwiSay(sectionLines[id]);
+  }
+
+  // reveal a comment the first time each section scrolls into view
+  const seen = new Set();
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting && !seen.has(e.target.id) && sectionLines[e.target.id]){
+        seen.add(e.target.id);
+        setTimeout(()=>kiwiSay(sectionLines[e.target.id]), 400);
+      }
+    });
+  }, {threshold:0.5});
+  Object.keys(sectionLines).forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) io.observe(el);
+  });
+
+
+  let idleTimer = setTimeout(()=>kiwiSay("You have been here for a while. Not judging. Okay, slightly judging."), 45000);
+
+
+  document.querySelectorAll('.school-opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.school-opt').forEach(b=>b.classList.remove('picked'));
+      btn.classList.add('picked');
+      document.getElementById('schoolReply').textContent = '> ' + btn.dataset.r;
+    });
+  });
+
+ 
+  const states = {
+    liquid: {symbol:'💧', item:'Water', note:'Classic. Hydration    update: installed. No further testing required.'},
+    gas:    {symbol:'🌬️', item:'Air', note:'Technically impossible to avoid, which made it an easy category to win.'},
+    solid:  {symbol:'⚙️🍔', item:'Metal + Burger', note:'One is useful for building computers. The other is useful for being hungry while building computers.'}
+  };
+  function setState(key){
+    document.querySelectorAll('.state-tab').forEach(t=>t.classList.toggle('active', t.dataset.state===key));
+    const s = states[key];
+    const d = document.getElementById('stateDisplay');
+    d.dataset.state = key;
+    d.innerHTML = `
+      <div class="state-symbol">${s.symbol}</div>
+      <div class="state-name">STATE: ${key.toUpperCase()}</div>
+      <div class="state-item">${s.item}</div>
+      <div class="state-note">${s.note}</div>
+    `;
+  }
+
+  let clickCount = 0, clickWindow;
+  document.addEventListener('click', ()=>{
+    clickCount++;
+    clearTimeout(clickWindow);
+    clickWindow = setTimeout(()=> clickCount = 0, 2500);
+    if(clickCount === 6){
+      kiwiSay("Bro.");
+    } else if(clickCount === 10){
+      kiwiSay("You can stop clicking. I believe you.");
+    }
+  });
+
+
+  setTimeout(()=>kiwiSay("Hey. I'm Kiwi. I live here now."), 1200);
+</script>
+
+</body>
+</html>
